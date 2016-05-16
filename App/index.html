@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Apple com started</title>
+  </head>
+  <style>
+    webview {
+      display:inline-flex;
+      width:800px;
+      height:600px;
+    }
+    webview.hide {
+      flex: 0 1;
+      width: 0px;
+      height: 0px;
+    }
+  </style>
+  <webview id="foo" autosize="on" minwidth="576" minheight="432" src="https://www.apple.com/" ></webview>
+</html>
