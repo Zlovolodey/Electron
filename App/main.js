@@ -4,6 +4,8 @@ const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
+const Menu = electron.Menu
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -16,7 +18,7 @@ function createWindow () {
   mainWindow.loadURL('file://' + __dirname + '/index.html')
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -25,6 +27,28 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  // Create the Application's main menu
+   var template = [{
+       label: "Application",
+       submenu: [
+           { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+           { type: "separator" },
+           { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+       ]}, {
+       label: "Edit",
+       submenu: [
+           { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+           { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+           { type: "separator" },
+           { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+           { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+           { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+           { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+       ]}
+   ];
+
+   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 // This method will be called when Electron has finished
@@ -60,5 +84,19 @@ app.on('activate', function () {
 
     webview.addEventListener('did-start-loading', loadstart);
     webview.addEventListener('did-stop-loading', loadstop);
+
+    const remote = electron.remote;
+
+    const MenuItem = electron.MenuItem;
+     
+    var menu = new Menu();
+    menu.append(new MenuItem({ label: 'MenuItem1', click: function() { console.log('item 1 clicked'); } }));
+    menu.append(new MenuItem({ type: 'separator' }));
+    menu.append(new MenuItem({ label: 'MenuItem2', type: 'checkbox', checked: true }));
+
+    webview.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+      menu.popup(remote.getCurrentWindow());
+    }, false);
   }
 })
